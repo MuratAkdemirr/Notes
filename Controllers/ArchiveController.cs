@@ -16,7 +16,7 @@ namespace Notes.Controllers;
 public class ArchiveController(AppDbContext context, UserManager<IdentityUser> userManager) : ControllerBase
 {
     //PUT
-    
+
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -31,16 +31,43 @@ public class ArchiveController(AppDbContext context, UserManager<IdentityUser> u
         {
             return NotFound();
         }
-        
+
         note.Status = Note.NoteStatus.Archived;
         note.ModifiedOn = DateTime.UtcNow;
 
         await context.SaveChangesAsync();
         return Ok();
     }
-    
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Kullanıcının arşivlediği notu arşivden çıkartır.")]
+    public async Task<IActionResult> UnArchive(int id)
+    {
+        var userId = userManager.GetUserId(User);
+
+        var note = await context.Notes.FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
+
+        if (note == null)
+        {
+            return NotFound();
+        }
+
+        if (note.Status != Note.NoteStatus.Archived)
+        {
+            return BadRequest();
+        }
+
+        note.Status = Note.NoteStatus.Active;
+        note.ModifiedOn = DateTime.UtcNow;
+
+        await context.SaveChangesAsync();
+        return Ok();
+    }
+
     //GET
-    
+
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [SwaggerOperation(Summary = "Kullanıcının arşivlenmiş notlarını getirir.")]
