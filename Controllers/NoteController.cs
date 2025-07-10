@@ -18,14 +18,18 @@ namespace Notes.Controllers;
 public class NoteController(AppDbContext context, UserManager<IdentityUser> userManager) : ControllerBase
 {
     // GET
+    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation("Kullanıcının kendine ait Not'ları getirir. (Tarihe göre en yakın Tarih her zaman üstte olur.) ")]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
+        var userId = userManager.GetUserId(User);
+
         var note = await context.Notes
             .Include(n => n.Tags)
-            .FirstOrDefaultAsync(n => n.Id == id);
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
 
         if (note == null)
             return NotFound();
@@ -41,7 +45,12 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
 
         return Ok(dto);
     }
+    
     // POST
+    
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation("Kullanıcı kendine ait bir Not oluşturur.")]
     [HttpPost("")]
     public async Task<IActionResult> Create(CreateNoteDto dto)
     {
@@ -93,21 +102,23 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
     
     // PUT
     
-    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation("Kullanıcı kendine ait Notu günceller.")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, CreateNoteDto dto)
     {
+        var userId = userManager.GetUserId(User);
+
         var note = await context.Notes
             .Include(n => n.Tags)
-            .FirstOrDefaultAsync(n => n.Id == id);
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
 
         if (note == null)
             return NotFound();
 
         note.Text = dto.Text;
         note.ModifiedOn = DateTime.UtcNow;
-        
         note.Tags.Clear();
 
         var tagNames = dto.Tags
@@ -136,11 +147,16 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
     //DELETE
     
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Kullanıcı kendine ait Notu siler.")]
     public async Task<IActionResult> Delete(int id)
     {
+        var userId = userManager.GetUserId(User);
+
         var note = await context.Notes
             .Include(n => n.Tags)
-            .FirstOrDefaultAsync(n => n.Id == id);
+            .FirstOrDefaultAsync(n => n.Id == id && n.UserId == userId);
 
         if (note == null)
             return NotFound();

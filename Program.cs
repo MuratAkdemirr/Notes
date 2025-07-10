@@ -88,12 +88,13 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Admin seeding error: {ex.Message}");
     }
 }
-
 app.UseHttpsRedirection();
 
 app.UseSwagger();
-app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Blog API v1"); });
+app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Note API V1"); });
 
+
+    
 app.UseAuthorization();
 
 app.MapGroup("Auth").MapIdentityApi<IdentityUser>().WithTags("Auth");
