@@ -39,7 +39,7 @@ public class ArchiveController(AppDbContext context, UserManager<IdentityUser> u
         return Ok();
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id}/unarchive")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(Summary = "Kullanıcının arşivlediği notu arşivden çıkartır.")]
