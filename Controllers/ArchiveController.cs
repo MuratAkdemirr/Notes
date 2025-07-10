@@ -12,7 +12,7 @@ namespace Notes.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Authorize]
-[SwaggerTag("Tag CRUD API'ları")]
+[SwaggerTag("Arşiv API'ları")]
 public class ArchiveController(AppDbContext context, UserManager<IdentityUser> userManager) : ControllerBase
 {
     //PUT
