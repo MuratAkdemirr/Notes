@@ -37,6 +37,7 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
         var dto = new NoteDto
         {
             Id = note.Id,
+            Title = note.Title,
             Text = note.Text,
             Tags = note.Tags.Select(t => t.Name).ToList(),
             CreatedOn = note.CreatedOn,
@@ -58,6 +59,7 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
 
         var note = new Note
         {
+            Title = dto.Title,
             Text = dto.Text,
             UserId = userId,
             CreatedOn = DateTime.UtcNow,
@@ -91,6 +93,7 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
         var result = new NoteDto
         {
             Id = note.Id,
+            Title = note.Title,
             Text = note.Text,
             Tags = note.Tags.Select(t => t.Name).ToList(),
             CreatedOn = note.CreatedOn,
@@ -116,7 +119,7 @@ public class NoteController(AppDbContext context, UserManager<IdentityUser> user
 
         if (note == null)
             return NotFound();
-
+        note.Title = note.Title;
         note.Text = dto.Text;
         note.ModifiedOn = DateTime.UtcNow;
         note.Tags.Clear();

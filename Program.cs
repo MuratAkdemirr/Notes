@@ -69,7 +69,7 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 
-app.UseCors("AllowFrontend");
+app.UseCors("AllowFrontend"); 
 
 app.MapOpenApi();
 app.MapControllers();
